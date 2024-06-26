@@ -44,4 +44,5 @@ public class TicketController {
         ticketService.supprimerTicket(id);
         return ResponseEntity.noContent().build();
     }
+
 }

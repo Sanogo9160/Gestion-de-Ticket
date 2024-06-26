@@ -2,7 +2,9 @@ package com.gestionticket.project.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,7 +17,8 @@ public class Ticket {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private Categorie categorie; // Assurez-vous que cette valeur n'est pas null
+    @Column(nullable = false)
+    private Categorie categorie;
 
     @Enumerated(EnumType.STRING)
     private Priorite priorite;
@@ -26,6 +29,17 @@ public class Ticket {
     private LocalDateTime dateCreation;
     private LocalDateTime dateMiseAJour;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private Apprenant user; // Utiliser Apprenant à la place de User pour l'apprenant qui soumet le ticket
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "formateur_id")
+    private Formateur formateur; // Utiliser Formateur à la place de User pour le formateur assigné au ticket
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications;
+
     @PrePersist
     protected void onCreate() {
         dateCreation = LocalDateTime.now();
@@ -35,7 +49,4 @@ public class Ticket {
     protected void onUpdate() {
         dateMiseAJour = LocalDateTime.now();
     }
-
-    @ManyToOne
-    private User user;
 }
